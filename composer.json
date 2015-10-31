@@ -4,7 +4,7 @@
     "keywords": ["queue","producer","worker", "yii2"],
     "homepage": "https://github.com/mithun12000/yii2-queue",
     "type": "yii2-extension",
-    "license": "MIT",
+    "license": "GNU",
     "authors": [
         {
             "name": "Mithun Mandal",
