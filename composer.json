@@ -17,13 +17,15 @@
     },
     "require": {
         "php": ">=5.4.0",
-        "ext-pcntl": "*",
-        "ext-amqp": "*",
         "predis/predis": "1.0.1",
         "pda/pheanstalk":"*",
-        "predis/predis":"*",
         "ptrofimov/beanstalk_console":"*",
         "erik-dubbelboer/php-redis-admin":"*"
+    },
+    "suggest": {
+        "ext-pcntl": "*",
+        "ext-amqp": "*",
+        "aws/aws-sdk-php": "~3.0"
     },
     "autoload": {
       "psr-4": {
