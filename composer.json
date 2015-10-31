@@ -1,5 +1,5 @@
 {
-    "name": "mithun12000/yii-resque",
+    "name": "mithun12000/yii-queue",
     "description": "Queue components for Yii2",
     "keywords": ["queue","producer","worker", "yii2"],
     "homepage": "https://github.com/mithun12000/yii2-queue",
