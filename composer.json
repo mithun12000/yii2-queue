@@ -19,6 +19,7 @@
         "php": ">=5.4.0",
         "predis/predis": "1.0.1",
         "pda/pheanstalk":"*",
+        "videlalvaro/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
         "erik-dubbelboer/php-redis-admin":"*"
     },
