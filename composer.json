@@ -26,7 +26,8 @@
     "suggest": {
         "ext-pcntl": "*",
         "ext-amqp": "*",
-        "aws/aws-sdk-php": "~3.0"
+        "aws/aws-sdk-php": "~3.0",
+        "microsoft/windowsazure":"*"
     },
     "autoload": {
       "psr-4": {
