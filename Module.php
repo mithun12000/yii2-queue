@@ -1,26 +1,18 @@
 <?php
 
-namespace backend\modules\sensex;
+namespace mithun\queue;
 
 use Yii;
-use yii\base\BootstrapInterface;
 use yii\base\Module as BaseModule;
 
-class Module extends BaseModule implements BootstrapInterface
+class Module extends BaseModule
 {
-    public $controllerNamespace = 'backend\modules\sensex\controllers';
+    public $controllerNamespace = 'mithun\queue\controllers';
 
     public function init()
     {
         parent::init();
 
         // custom initialization code goes here
-    }
-    
-    public function bootstrap($app)
-    {
-    	if ($app instanceof \yii\console\Application) {
-    		$this->controllerNamespace = 'backend\modules\sensex\commands';
-    	}
     }
 }
