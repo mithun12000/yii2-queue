@@ -21,7 +21,8 @@
         "pda/pheanstalk":"*",
         "videlalvaro/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
-        "erik-dubbelboer/php-redis-admin":"*"
+        "erik-dubbelboer/php-redis-admin":"*",
+        "symfony/process":"*"
     },
     "suggest": {
         "ext-pcntl": "*",
