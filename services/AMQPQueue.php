@@ -1,8 +1,6 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * 
  */
 namespace mithun\queue\services;
 use PhpAmqpLib\Connection\AMQPConnection;
@@ -12,9 +10,9 @@ use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\helpers\Json;
 /**
- * RedisQueue
+ * AMQPQueue
  *
- * @author Alexander Kochetov <creocoder@gmail.com>
+ * @author Mithun Mandal <mithun12000@gmail.com>
  */
 class AMQPQueue extends Component implements QueueInterface
 {
@@ -40,10 +38,18 @@ class AMQPQueue extends Component implements QueueInterface
     public $exchange = '';
     
     /**
+     * Routing Key for exchange
+     * @var string
+     */
+    public $routing_key;
+    
+    /**
      * Exchange Type
      * @var string
      */
     public $exchangeType = 'fanout';
+    
+    
     /**
      * @inheritdoc
      */
@@ -65,22 +71,38 @@ class AMQPQueue extends Component implements QueueInterface
         if(!$this->channel){
         	$this->channel = $this->amqp->channel();
         }
+        register_shutdown_function(array($this, 'shutdown'));
         
         if($this->exchange){
         	$this->channel->exchange_declare($this->exchange, $this->exchangeType, false, false, false);
         }
     }
+    
+    public function shutdown(){
+    	$this->channel->close();
+    	$this->amqp->close();
+    }
+    
+    /**
+     * Destructor
+     */
+    public function __destruct(){
+    	$this->shutdown();
+    }
+    
     /**
      * @inheritdoc
      */
     public function push($payload, $queue, $delay = 0)
     {
-    	$this->channel->queue_declare($queue, false, true, false, false);
-    	
-    	$routing_key = '';
-    	if($payload['route_key']){
-    		$routing_key = $payload['route_key'];
-    		unset($payload['route_key']);
+    	if(!$this->exchange){
+    		$this->channel->queue_declare($queue, false, true, false, false);
+    		if($payload['route_key']){
+    			$this->routing_key = $payload['route_key'];
+    			unset($payload['route_key']);
+    		}
+    	}else{
+    		$this->routing_key = $queue;
     	}
     	
     	if(is_array($payload['body']) || is_object($payload['body'])){
@@ -91,7 +113,7 @@ class AMQPQueue extends Component implements QueueInterface
         
         $msg = new AMQPMessage($msg_body,$payload);
         
-        $channel->basic_publish($msg, $this->exchange,$routing_key);
+        $this->channel->basic_publish($msg, $this->exchange,$this->routing_key);
         return $msg;
     }
     /**
@@ -99,50 +121,39 @@ class AMQPQueue extends Component implements QueueInterface
      */
     public function pop($queue)
     {
-        foreach ([':delayed', ':reserved'] as $type) {
-            $options = ['cas' => true, 'watch' => $queue . $type];
-            $this->redis->transaction($options, function (MultiExec $transaction) use ($queue, $type) {
-                $data = $this->redis->zrangebyscore($queue . $type, '-inf', $time = time());
-                if (!empty($data)) {
-                    $transaction->zremrangebyscore($queue . $type, '-inf', $time);
-                    $transaction->rpush($queue, $data);
-                }
-            });
-        }
-        $data = $this->redis->lpop($queue);
-        if ($data === null) {
-            return false;
-        }
-        $this->redis->zadd($queue . ':reserved', [$data => time() + $this->expire]);
-        $data = Json::decode($data);
-        return [
-            'id' => $data['id'],
-            'body' => $data['body'],
-            'queue' => $queue,
-        ];
+        if(!$this->exchange){
+    		$this->channel->queue_declare($queue, false, true, false, false);
+    	}else{
+    		list($queue_name, ,) = $this->channel->queue_declare("", false, false, true, false);
+    		$this->channel->queue_bind($queue_name, $this->exchange, $queue);
+    		$queue = $queue_name;
+    	}
+    	
+    	$this->channel->basic_qos(null, 1, null);
+        return $this->channel->basic_get($queue);
     }
     /**
      * @inheritdoc
      */
     public function purge($queue) {
-        $this->redis->del([$queue, $queue . ':delayed', $queue . ':reserved']);
+        $this->channel->queue_purge($queue);
     }
     /**
      * @inheritdoc
      */
     public function release(array $message, $delay = 0)
-    {
-        if ($delay > 0) {
-            $this->redis->zadd($message['queue'] . ':delayed', [$message['body'] => time() + $delay]);
-        } else {
-            $this->redis->rpush($message['queue'], [$message['body']]);
-        }
+    {   
+        foreach ($message as $msg){
+        	$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
+    	}
     }
     /**
      * @inheritdoc
      */
     public function delete(array $message)
     {
-        $this->redis->zrem($message['queue'] . ':reserved', $message['body']);
+    	foreach ($message as $msg){
+         	$this->channel->basic_cancel($msg->delivery_info['consumer_tag']);
+    	}
     }
 }
