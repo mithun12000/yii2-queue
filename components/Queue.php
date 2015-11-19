@@ -6,7 +6,6 @@ namespace mithun\queue\components;;
 
 use Yii;
 use yii\base\Component;
-use yii\base\Event;
 use mithun\queue\services\QueueInterface;
 use yii\base\InvalidConfigException;
 
@@ -41,10 +40,17 @@ class Queue extends Component implements QueueInterface
 	public function init()
 	{
 		parent::init();
+		
+		if(!$this->driver){
+			throw new InvalidConfigException("Driver is required.");
+		}
+		
+		$this->driver = Yii::createObject($this->driver);
 	}
 	
 	/**
-	 * Event Trigger
+	 * Event triggering code
+	 * @param string $event_name
 	 */
 	public function trigger_event($event_name){
 		$event = new QueueEvent();
