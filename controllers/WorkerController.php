@@ -10,7 +10,7 @@ use yii\helpers\Console;
 use yii\helpers\FileHelper;
 
 /**
- * Worker Controller
+ * Manage Worker Job
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
@@ -23,57 +23,41 @@ class WorkerController extends BaseQueueController
 	
 	
 	/**
-	 * Upgrades the application by applying new migrations.
+	 * Run worker to consume job.
 	 * For example,
 	 *
 	 * ~~~
-	 * yii migrate     # apply all new migrations
-	 * yii migrate 3   # apply the first 3 new migrations
+	 * yii queue/worker     			# List all workers
+	 * yii queue/worker worker1 3   	#run worker name producer1 with max 3 process
+	 * yii queue/worker worker1 3 2  	#run worker name producer1 with max 3 process with min 2 process
 	 * ~~~
-	 *
-	 * @param integer $limit the number of new migrations to be applied. If 0, it means
-	 * applying all available new migrations.
-	 *
+	 * @param string $producer the producer class
+	 * @param integer $max the maxumum number of producer process
+	 * @param integer $min the minimum number of producer process
 	 * @return integer the status of the action execution. 0 means normal, other values mean abnormal.
 	 */
-	public function actionWorker($worker = '')
+	public function actionWorker($worker = '', $max=1, $min=1)
 	{
-		$migrations = $this->getNewMigrations();
-		if (empty($migrations)) {
-			$this->stdout("No new migration found. Your system is up-to-date.\n", Console::FG_GREEN);
-			return self::EXIT_CODE_NORMAL;
-		}
-		$total = count($migrations);
-		$limit = (int) $limit;
-		if ($limit > 0) {
-			$migrations = array_slice($migrations, 0, $limit);
-		}
-		$n = count($migrations);
-		if ($n === $total) {
-			$this->stdout("Total $n new " . ($n === 1 ? 'migration' : 'migrations') . " to be applied:\n", Console::FG_YELLOW);
-		} else {
-			$this->stdout("Total $n out of $total new " . ($total === 1 ? 'migration' : 'migrations') . " to be applied:\n", Console::FG_YELLOW);
-		}
-		foreach ($migrations as $migration) {
-			$this->stdout("\t$migration\n");
-		}
-		$this->stdout("\n");
-		$applied = 0;
-		if ($this->confirm('Apply the above ' . ($n === 1 ? 'migration' : 'migrations') . '?')) {
-			foreach ($migrations as $migration) {
-				if (!$this->migrateUp($migration)) {
-					$this->stdout("\n$applied from $n " . ($applied === 1 ? 'migration was' : 'migrations were') ." applied.\n", Console::FG_RED);
-					$this->stdout("\nMigration failed. The rest of the migrations are canceled.\n", Console::FG_RED);
-					return self::EXIT_CODE_ERROR;
-				}
-				$applied++;
+		if($worker){
+			return $this->runWorker($worker);
+		}else {
+			$workerAr = $this->getWorkers();
+			if (empty($workerAr)) {
+				$this->stdout("No producer found.\n", Console::FG_GREEN);
+				return self::EXIT_CODE_NORMAL;
 			}
-			$this->stdout("\n$n " . ($n === 1 ? 'migration was' : 'migrations were') ." applied.\n", Console::FG_GREEN);
-			$this->stdout("\nMigrated up successfully.\n", Console::FG_GREEN);
+			$total = count($workerAr);
+			
+			foreach ($workerAr as $className) {
+				$this->stdout("\t$className\n");
+			}
+			$this->stdout("\n");
+			return 0;
 		}
 	}
 	
 	/**
+	 * Create New Worker
 	 * @inheritdoc
 	 */
 	public function actionCreate($name)

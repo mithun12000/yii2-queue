@@ -1,8 +1,10 @@
 <?php
+echo "<?php\n";
+?>
 /**
  * 
  */
-namespace [NAMESPACE];
+namespace <?= StringHelper::dirname(ltrim($generator->controllerClass, '\\')) ?>;
 
 use Yii;
 use mithun\queue\worker\Worker;
@@ -12,17 +14,17 @@ use mithun\queue\worker\Worker;
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-class [CLASS] extends Worker
-{	
-	/**
+class <?= $controllerClass ?> extends Worker
+{
+    /**
 	 * @inheritdoc
 	 */
-	//public $min = 1;
+	public $min = 1;
 	
 	/**
 	 * @inheritdoc
 	 */
-	//public $max = 1;
+	public $max = 1;
 	
 	/**
 	 * @inheritdoc

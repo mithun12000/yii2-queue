@@ -30,18 +30,11 @@ abstract class BaseQueueController extends Controller
 	protected  $producerPath = ['@app/producer'];
 	
 	/**
-	 * @var string the template file for generating new worker.
+	 * @var string the template file for generating new worker/producer.
 	 * This can be either a path alias (e.g. "@app/worker/template.php")
 	 * or a file path.
 	 */
-	public $workertemplateFile;
-	
-	/**
-	 * @var string the template file for generating new producer.
-	 * This can be either a path alias (e.g. "@app/producer/template.php")
-	 * or a file path.
-	 */
-	public $producertemplateFile;
+	public $templateFile;
 	
 	/**
 	 * @inheritdoc
@@ -84,15 +77,11 @@ abstract class BaseQueueController extends Controller
 	
 	
 	/**
-	 * Creates a new migration.
+	 * Creates a new producer / worker.
 	 *
-	 * This command creates a new migration using the available migration template.
+	 * This command creates a new producer / worker using the available migration template.
 	 * After using this command, developers should modify the created migration
 	 * skeleton by filling up the actual migration logic.
-	 *
-	 * ~~~
-	 * yii migrate/create create_user_table
-	 * ~~~
 	 *
 	 * @param string $name the name of the new migration. This should only contain
 	 * letters, digits and/or underscores.
@@ -102,8 +91,8 @@ abstract class BaseQueueController extends Controller
 	
 	
 	/**
-	 * Upgrades with the specified migration class.
-	 * @param string $class the migration class name
+	 * run worker class
+	 * @param string $class the worker class name
 	 * @return boolean whether the migration is successful
 	 */
 	protected function runWorker($class)
@@ -112,7 +101,7 @@ abstract class BaseQueueController extends Controller
 	}
 	
 	/**
-	 * Upgrades with the specified migration class.
+	 * run producer
 	 * @param string $class the migration class name
 	 * @return boolean whether the migration is successful
 	 */
@@ -131,5 +120,19 @@ abstract class BaseQueueController extends Controller
 		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $class . '.php';
 		require_once($file);
 		return new $class();
+	}
+	
+	/**
+	 * get all worker class name
+	 */
+	protected function getWorkers(){
+		
+	}
+	
+	/**
+	 * Get all producer class name
+	 */
+	protected function getProducer(){
+		
 	}
 }
