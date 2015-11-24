@@ -18,13 +18,13 @@ class Producer extends Object
 	 * Min process to run
 	 * @var integer
 	 */
-	final public $min = 1;
+	public $min = 1;
 	
 	/**
 	 * Max process to run
 	 * @var integer
 	 */
-	final public $max = 1;
+	public $max = 1;
 	
 	/**
 	 * Runnable producer method
