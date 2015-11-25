@@ -34,7 +34,7 @@ class ProducerController extends BaseQueueController
 	 * yii queue/producer     # List all producer
 	 * ~~~
 	 * @param string $producer the producer class
-	 * @return integer the status of the action execution. 0 means normal, other values mean abnormal.
+	 * @return boolean the status of the action execution. 0 means normal, other values mean abnormal.
 	 */
 	public function actionProducer($producer = '')
 	{

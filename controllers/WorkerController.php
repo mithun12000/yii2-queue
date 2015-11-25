@@ -38,7 +38,7 @@ class WorkerController extends BaseQueueController
 	 * @param string $producer the producer class
 	 * @param integer $max the maxumum number of producer process
 	 * @param integer $min the minimum number of producer process
-	 * @return integer the status of the action execution. 0 means normal, other values mean abnormal.
+	 * @return boolean the status of the action execution. 0 means normal, other values mean abnormal.
 	 */
 	public function actionWorker($worker = '', $max=1, $min=1)
 	{
