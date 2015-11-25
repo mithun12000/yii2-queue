@@ -21,13 +21,13 @@ abstract class BaseQueueController extends Controller
 	 * @var array the directory storing the worker classes. This can be either
 	 * a path alias or a directory.
 	 */
-	protected  $workerPath = ['@app/worker'];
+	protected  $workerPath = ['@app/workers'];
 	
 	/**
 	 * @var array the directory storing the producer classes. This can be either
 	 * a path alias or a directory.
 	 */
-	protected  $producerPath = ['@app/producer'];
+	protected  $producerPath = ['@app/producers'];
 	
 	/**
 	 * @var string the template file for generating new worker/producer.
@@ -35,6 +35,28 @@ abstract class BaseQueueController extends Controller
 	 * or a file path.
 	 */
 	public $templateFile;
+	
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function init()
+	{
+		parent::init();
+		$exclude = ['module'=>['debug','gii','metadata','queue']];
+		foreach (Yii::$app->getModules() as $id => $child) {
+			if (($child = Yii::$app->getModule($id)) !== null) {
+				if(!in_array($child->id, $exclude['module'])){
+					$path = '@' . str_replace('\\', '/', trim($child->controllerNamespace, '\\'));
+					$path = str_replace('commands', '[PUBSUB]', $path);
+					$path = str_replace('controllers', '[PUBSUB]', $path);
+					
+					$this->workerPath[] = str_replace('[PUBSUB]', 'workers', $path);
+					$this->producerPath[] = str_replace('[PUBSUB]', 'producers', $path);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * @inheritdoc
@@ -111,28 +133,66 @@ abstract class BaseQueueController extends Controller
 	}
 	
 	/**
-	 * Creates a new migration instance.
+	 * Creates a new Producer / Worker instance.
 	 * @param string $class the migration class name
-	 * @return \yii\db\MigrationInterface the migration instance
+	 * @param string $path The file path
+	 * @param string $namespace namespace of the file
 	 */
-	protected function createMigration($class)
+	protected function createPubsub($class,$path,$namespace)
 	{
-		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $class . '.php';
-		require_once($file);
-		return new $class();
+		if (!preg_match('/^\w+$/', $name)) {
+			throw new Exception('The migration name should contain letters, digits and/or underscore characters only.');
+		}
+		$name = 'm' . gmdate('ymd_His') . '_' . $name;
+		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
+		if ($this->confirm("Create new migration '$file'?")) {
+			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $name]);
+			file_put_contents($file, $content);
+			$this->stdout("New migration created successfully.\n", Console::FG_GREEN);
+		}
+	}
+	
+	/**
+	 * Read directory for producer / worker file
+	 * @param string $path
+	 */
+	protected function readPubSub($path){
+		$pubsub = [];
+		$path = Yii::getAlias($path);
+		$handle = opendir($path);
+		while (($file = readdir($handle)) !== false) {
+			if ($file === '.' || $file === '..') {
+				continue;
+			}
+			if (preg_match('/^(m(\d{6}_\d{6})_.*?)\.php$/', $file, $matches) && is_file($path . DIRECTORY_SEPARATOR . $file)) {
+				$pubsub[] = $matches[1];
+			}
+		}
+		closedir($handle);
+		return $pubsub;
 	}
 	
 	/**
 	 * get all worker class name
 	 */
 	protected function getWorkers(){
-		
+		$worker = [];
+		foreach($this->workerPath as $path_alias){
+			$worker = array_merge($worker,$this->readPubSub($path_alias));
+		}
+		sort($worker);
+		return $worker;
 	}
 	
 	/**
 	 * Get all producer class name
 	 */
 	protected function getProducer(){
-		
+		$producer = [];
+		foreach($this->workerPath as $path_alias){
+			$producer = array_merge($worker,$this->readPubSub($path_alias));
+		}
+		sort($producer);
+		return $producer;
 	}
 }

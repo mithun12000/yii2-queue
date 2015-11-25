@@ -17,6 +17,10 @@ use yii\helpers\FileHelper;
 class WorkerController extends BaseQueueController
 {
 	/**
+	 * @var string
+	 */
+	public $templateFile = '@mithun/queue/worker/template';
+	/**
 	 * @var string the default command action.
 	 */
 	public $defaultAction = 'worker';
@@ -60,17 +64,8 @@ class WorkerController extends BaseQueueController
 	 * Create New Worker
 	 * @inheritdoc
 	 */
-	public function actionCreate($name)
+	public function actionCreate($name,$path = '@app/workers',$namespace = 'app\workers')
 	{
-		if (!preg_match('/^\w+$/', $name)) {
-			throw new Exception('The migration name should contain letters, digits and/or underscore characters only.');
-		}
-		$name = 'm' . gmdate('ymd_His') . '_' . $name;
-		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
-		if ($this->confirm("Create new migration '$file'?")) {
-			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $name]);
-			file_put_contents($file, $content);
-			$this->stdout("New migration created successfully.\n", Console::FG_GREEN);
-		}
+		$this->createPubsub($name,$path,$namespace);
 	}
 }
