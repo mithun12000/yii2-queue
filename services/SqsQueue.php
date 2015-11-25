@@ -18,20 +18,25 @@ use yii\helpers\Json;
 class SqsQueue extends Component implements QueueInterface
 {
     /**
-     * @var SqsClient|array
+     * @var SqsClient
      */
     public $sqs;
+    
+    /**
+     * @var array
+     */
+    public $config;
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-        if ($this->sqs === null) {
-            throw new InvalidConfigException('The "sqs" property must be set.');
+        if ($this->config === null) {
+            throw new InvalidConfigException('The "config" property must be set.');
         }
         if (!$this->sqs instanceof SqsClient) {
-            $this->sqs = new SqsClient($this->sqs);
+            $this->sqs = new SqsClient($this->config);
         }
     }
     /**

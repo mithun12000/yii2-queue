@@ -17,10 +17,20 @@ use yii\helpers\Json;
 class AMQPQueue extends Component implements QueueInterface
 {
     /**
-     * @var AMQPConnection|array
+     * @var AMQPConnection
      */
     public $amqp;
     
+    /**
+     * @var array
+     */
+    public $config = [
+    		'host' 		=> '127.0.0.1',
+    		'port' 		=> 5672,
+    		'username' 	=> '',
+    		'password' 	=> '',
+    		'vhost'		=> '',
+    ];
     /**
      * Channel
      * @var unknown
@@ -56,15 +66,16 @@ class AMQPQueue extends Component implements QueueInterface
     public function init()
     {
         parent::init();
-        if ($this->amqp === null) {
-            throw new InvalidConfigException('The "redis" property must be set.');
+        if ($this->config === null) {
+            throw new InvalidConfigException('The "config" property must be set.');
         }
         if (!$this->amqp instanceof AMQPConnection) {
             $this->amqp = new AMQPConnection(
-            			$this->amqp['host'],
-            			$this->amqp['port'],
-            			$this->amqp['username'],
-            			$this->amqp['password']
+            			$this->config['host'],
+            			$this->config['port'],
+            			$this->config['username'],
+            			$this->config['password'],
+            			$this->config['vhost']
             		);
         }
         

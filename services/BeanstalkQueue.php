@@ -19,9 +19,20 @@ use yii\helpers\Json;
 class BeanstalkQueue extends Component implements QueueInterface
 {
     /**
-     * @var Pheanstalk|array
+     * @var Pheanstalk
      */
     public $beanstalk;
+    
+    /**
+     * Configuration
+     * @var array
+     */
+    public $config = [
+    		'host' => '127.0.0.1',
+    		'port' => 11300,
+    		'timeout' => null,
+    		'Persistent' => FALSE,
+    ];
     /**
      * @var integer
      */
@@ -32,11 +43,16 @@ class BeanstalkQueue extends Component implements QueueInterface
     public function init()
     {
         parent::init();
-        if ($this->beanstalk === null) {
-            throw new InvalidConfigException('The "beanstalk" property must be set.');
+        if ($this->config === null) {
+            throw new InvalidConfigException('The "config" property must be set.');
         }
         if (!$this->beanstalk instanceof Pheanstalk) {
-            $this->beanstalk = new Pheanstalk($this->beanstalk);
+            $this->beanstalk = new Pheanstalk(
+            						$this->config['host'],
+            						$this->config['port'],
+            						$this->config['timeout'],
+            						$this->config['Persistent']
+            					);
         }
     }
     /**

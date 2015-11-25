@@ -19,9 +19,19 @@ use yii\helpers\Json;
 class RedisQueue extends Component implements QueueInterface
 {
     /**
-     * @var Client|array
+     * @var Client
      */
     public $redis;
+    
+    /**
+     * @var mixed
+     */
+    public $config = null;
+    
+    /**
+     * @var mixed
+     */
+    public $options = null;
     /**
      * @var integer
      */
@@ -32,11 +42,11 @@ class RedisQueue extends Component implements QueueInterface
     public function init()
     {
         parent::init();
-        if ($this->redis === null) {
-            throw new InvalidConfigException('The "redis" property must be set.');
+        if ($this->config === null) {
+            throw new InvalidConfigException('The "config" property must be set.');
         }
         if (!$this->redis instanceof Client) {
-            $this->redis = new Client($this->redis);
+            $this->redis = new Client($this->config, $this->options);
         }
     }
     /**
