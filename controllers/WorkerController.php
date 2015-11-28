@@ -19,7 +19,7 @@ class WorkerController extends BaseQueueController
 	/**
 	 * @var string
 	 */
-	public $templateFile = '@mithun/queue/worker/template';
+	public $templateFile = '@mithun/queue/worker/template.php';
 	/**
 	 * @var string the default command action.
 	 */
@@ -61,11 +61,20 @@ class WorkerController extends BaseQueueController
 	}
 	
 	/**
-	 * Create New Worker
-	 * @inheritdoc
+	 * Creates a new Worker
+	 *
+	 * This command creates a new worker using the available worker template.
+	 * After using this command, developers should modify the created worker
+	 * skeleton by filling up the actual worker logic.
+	 *
+	 * @param string $name the name of the new worker. This should only contain
+	 * letters, digits and/or underscores.
+	 * @param string $path the path for generating new worker.
+	 * This will be path alias (e.g. "@app") default "@app"
+	 * @throws Exception if the name argument is invalid.
 	 */
-	public function actionCreate($name,$path = '@app/workers',$namespace = 'app\workers')
+	public function actionCreate($name,$path = '@app')
 	{
-		$this->createPubsub($name,$path,$namespace);
+		$this->createPubsub($name,'Worker',$path.'/workers');
 	}
 }

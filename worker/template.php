@@ -4,7 +4,7 @@ echo "<?php\n";
 /**
  * 
  */
-namespace <?= StringHelper::dirname(ltrim($generator->controllerClass, '\\')) ?>;
+namespace <?= $namespace ?>;
 
 use Yii;
 use mithun\queue\worker\Worker;
@@ -14,7 +14,7 @@ use mithun\queue\worker\Worker;
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-class <?= $controllerClass ?> extends Worker
+class <?= $className ?> extends Worker
 {
     /**
 	 * @inheritdoc

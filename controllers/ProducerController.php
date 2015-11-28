@@ -19,7 +19,7 @@ class ProducerController extends BaseQueueController
 	/**
 	 * @var string
 	 */
-	public $templateFile = '@mithun/queue/producer/template';
+	public $templateFile = '@mithun/queue/producer/template.php';
 	
 	/**
 	 * @var string the default command action.
@@ -57,11 +57,20 @@ class ProducerController extends BaseQueueController
 	}
 	
 	/**
-	 * Create New Producer
-	 * @inheritdoc
+	 * Creates a new Producer
+	 *
+	 * This command creates a new producer using the available producer template.
+	 * After using this command, developers should modify the created producer
+	 * skeleton by filling up the actual producer logic.
+	 *
+	 * @param string $name the name of the new producer. This should only contain
+	 * letters, digits and/or underscores.
+	 * @param string $path the path for generating new producer.
+	 * This will be path alias (e.g. "@app") default "@app"
+	 * @throws Exception if the name argument is invalid.
 	 */
-	public function actionCreate($name,$path = '@app/producers')
+	public function actionCreate($name,$path = '@app')
 	{
-		$this->createPubsub($name,$path,$namespace);		
+		$this->createPubsub($name,'Producer',$path.'/producers');
 	}
 }

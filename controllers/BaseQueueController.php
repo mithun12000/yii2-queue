@@ -73,7 +73,6 @@ abstract class BaseQueueController extends Controller
 	
 	/**
 	 * This method is invoked right before an action is to be executed (after all possible filters.)
-	 * It checks the existence of the [[migrationPath]].
 	 * @param \yii\base\Action $action the action to be executed.
 	 * @throws Exception if directory specified in migrationPath doesn't exist and action isn't "create".
 	 * @return boolean whether the action should continue to be executed.
@@ -81,16 +80,8 @@ abstract class BaseQueueController extends Controller
 	public function beforeAction($action)
 	{
 		if (parent::beforeAction($action)) {
-			$path = Yii::getAlias($this->migrationPath);
-			if (!is_dir($path)) {
-				if ($action->id !== 'create') {
-					throw new Exception("Migration failed. Directory specified in migrationPath doesn't exist: {$this->migrationPath}");
-				}
-				FileHelper::createDirectory($path);
-			}
-			$this->migrationPath = $path;
 			$version = Yii::getVersion();
-			$this->stdout("Yii Migration Tool (based on Yii v{$version})\n\n");
+			$this->stdout("Yii PubSub Tool (based on Yii v{$version})\n\n");
 			return true;
 		} else {
 			return false;
@@ -99,17 +90,19 @@ abstract class BaseQueueController extends Controller
 	
 	
 	/**
-	 * Creates a new producer / worker.
+	 * Creates a new producer/worker
 	 *
-	 * This command creates a new producer / worker using the available migration template.
-	 * After using this command, developers should modify the created migration
-	 * skeleton by filling up the actual migration logic.
+	 * This command creates a new producer/worker using the available producer/worker template.
+	 * After using this command, developers should modify the created producer/worker
+	 * skeleton by filling up the actual producer logic.
 	 *
-	 * @param string $name the name of the new migration. This should only contain
+	 * @param string $name the name of the new producer/worker. This should only contain
 	 * letters, digits and/or underscores.
+	 * @param string $path the path for generating new producer/worker.
+	 * This will be path alias (e.g. "@app") default "@app"
 	 * @throws Exception if the name argument is invalid.
 	 */
-	abstract public function actionCreate($name);
+	abstract public function actionCreate($name, $path = '@app');
 	
 	
 	/**
@@ -134,21 +127,41 @@ abstract class BaseQueueController extends Controller
 	
 	/**
 	 * Creates a new Producer / Worker instance.
-	 * @param string $class the migration class name
+	 * @param string $name the Producer / Worker class name
+	 * @param string $type create Type 
 	 * @param string $path The file path
-	 * @param string $namespace namespace of the file
 	 */
-	protected function createPubsub($class,$path,$namespace)
+	protected function createPubsub($name, $type, $path)
 	{
-		if (!preg_match('/^\w+$/', $name)) {
-			throw new Exception('The migration name should contain letters, digits and/or underscore characters only.');
+		$namespace = $path;
+		$path = Yii::getAlias($path);
+		if (!is_dir($path)) {
+			FileHelper::createDirectory($path);
 		}
-		$name = 'm' . gmdate('ymd_His') . '_' . $name;
-		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
-		if ($this->confirm("Create new migration '$file'?")) {
-			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $name]);
+		
+		$namespace = Yii::getAlias(str_replace('@','',str_replace('/','\\' , $namespace)));
+		
+		if(strpos($namespace, 'app') == 0 &&  strpos($namespace,'app') !== false){
+			$_namespace = explode('\\', Yii::$app->controllerNamespace);
+			array_pop($_namespace);
+			$namespace = str_replace('app', implode('\\', $_namespace), $namespace);
+		}
+		
+		$this->stdout("With Namespace:$namespace\n", Console::FG_GREEN);
+		
+		if (!preg_match('/^\w+$/', $name)) {
+			throw new Exception('The '.$type.' name should contain letters, digits and/or underscore characters only.');
+		}
+		
+		$className = 'm' . gmdate('ymd_His') . '_' . $name;
+		$file = $path . DIRECTORY_SEPARATOR . $className . '.php';
+		
+		if ($this->confirm("Create new $type '$file'?")) {
+			
+			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $className,'namespace'=>$namespace]);
+		
 			file_put_contents($file, $content);
-			$this->stdout("New migration created successfully.\n", Console::FG_GREEN);
+			$this->stdout("New $type created successfully.\n", Console::FG_GREEN);
 		}
 	}
 	
