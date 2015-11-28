@@ -108,21 +108,21 @@ abstract class BaseQueueController extends Controller
 	/**
 	 * run worker class
 	 * @param string $class the worker class name
-	 * @return boolean whether the migration is successful
+	 * @return integer whether the migration is successful
 	 */
 	protected function runWorker($class)
 	{
-		
+		return self::EXIT_CODE_NORMAL;
 	}
 	
 	/**
 	 * run producer
 	 * @param string $class the migration class name
-	 * @return boolean whether the migration is successful
+	 * @return integer whether the migration is successful
 	 */
 	protected function runProducer($class)
 	{
-	
+		return self::EXIT_CODE_NORMAL;
 	}
 	
 	/**
