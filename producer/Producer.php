@@ -12,7 +12,7 @@ use yii\base\Object;
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-class Producer extends Object
+abstract class Producer extends Object
 {	
 	/**
 	 * Min process to run

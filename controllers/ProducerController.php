@@ -32,27 +32,17 @@ class ProducerController extends BaseQueueController
 	 *
 	 * ~~~
 	 * yii queue/producer     # List all producer
+	 * yii queue/producer producer1   	#run producer name producer1
 	 * ~~~
 	 * @param string $producer the producer class
-	 * @return boolean the status of the action execution. 0 means normal, other values mean abnormal.
+	 * @return integer the status of the action execution. 0 means normal, other values mean abnormal.
 	 */
 	public function actionProducer($producer = '')
 	{
 		if($producer){
 			return $this->runProducer($producer);
 		}else {
-			$producerAr = $this->getProducer();
-			if (empty($producerAr)) {
-				$this->stdout("No producer found.\n", Console::FG_GREEN);
-				return self::EXIT_CODE_NORMAL;
-			}
-			$total = count($producerAr);
-			
-			foreach ($producerAr as $className) {
-				$this->stdout("\t$className\n");
-			}
-			$this->stdout("\n");
-			return 0;
+			return $this->getProducer();	
 		}
 	}
 	

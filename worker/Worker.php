@@ -12,7 +12,7 @@ use yii\base\Object;
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-abstract  class Worker extends Object
+abstract class Worker extends Object
 {	
 	/**
 	 * minimum process to run

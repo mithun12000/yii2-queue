@@ -194,7 +194,7 @@ abstract class BaseQueueController extends Controller
 			$worker = array_merge($worker,$this->readPubSub($path_alias));
 		}
 		sort($worker);
-		return $worker;
+		return $this->checkPubsub($worker, 'No worker found');
 	}
 	
 	/**
@@ -202,10 +202,29 @@ abstract class BaseQueueController extends Controller
 	 */
 	protected function getProducer(){
 		$producer = [];
-		foreach($this->workerPath as $path_alias){
-			$producer = array_merge($worker,$this->readPubSub($path_alias));
+		foreach($this->producerPath as $path_alias){
+			$producer = array_merge($producer,$this->readPubSub($path_alias));
 		}
 		sort($producer);
-		return $producer;
+		return $this->checkPubsub($producer, 'No producer found');
+	}
+	
+	/**
+	 * Check Pubsub
+	 * @param array $array pubsub class array
+	 * @param string $message error message
+	 * @return mixed
+	 */
+	protected function checkPubsub($array, $message){
+		if (empty($array)) {
+			$this->stdout("$message.\n", Console::FG_GREEN);
+			return self::EXIT_CODE_NORMAL;
+		}else{
+			foreach ($array as $className) {
+				$this->stdout("\t$className\n");
+			}
+			$this->stdout("\n");
+			return 0;
+		}
 	}
 }
