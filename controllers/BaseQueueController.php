@@ -9,6 +9,7 @@ use yii\console\Exception;
 use yii\console\Controller;
 use yii\helpers\Console;
 use yii\helpers\FileHelper;
+use yii\base\InvalidParamException;
 
 /**
  * Base Queue Controller
@@ -111,11 +112,11 @@ abstract class BaseQueueController extends Controller
 	 * @return integer whether the migration is successful
 	 */
 	protected function runWorker($class)
-	{	
-		$found = false;
-		$workers = [];
-		foreach($this->workerPath as $path_alias){
-			$workers = $this->readPubSub($path_alias);
+	{
+		try{
+			$obj = $this->loadPubsubClass($class, $this->workerPath);
+		}catch (InvalidParamException $e){
+			$this->stdout("Worker name $class Not found\n", Console::FG_RED);
 		}
 		return self::EXIT_CODE_NORMAL;
 	}
@@ -127,7 +128,59 @@ abstract class BaseQueueController extends Controller
 	 */
 	protected function runProducer($class)
 	{
+		try{
+			$obj = $this->loadPubsubClass($class,$this->producerPath);
+		}catch (InvalidParamException $e){
+			$this->stdout("Producer name $class Not found\n", Console::FG_RED);
+		}
 		return self::EXIT_CODE_NORMAL;
+	}
+	
+	/**
+	 * Get Producer / worker class path
+	 * @param array $path 
+	 * @param string $class
+	 * @return string class path
+	 * @throws InvalidParamException when $path is empty and class not found
+	 */
+	private function getPubsubClass($path, $class){
+		$found = false;
+		$pubsub = [];
+		if(!$path){
+			throw new InvalidParamException('No path provided');
+		}
+		
+		foreach($path as $path_alias){
+			$pubsub = $this->readPubSub($path_alias);
+				
+			if($pubsub && in_array($class, $pubsub)){
+				$this->stdout("Class File:$path_alias/$class.php\n", Console::FG_GREEN);
+				return $path_alias."/".$class;
+			}
+		}
+		
+		if(!$found){
+			throw new InvalidParamException('Class not found');
+		}
+	}
+	
+	/**
+	 * Load Class from class path
+	 * @param string $class class name
+	 * @param array $path path alias for pubsub
+	 * @throws InvalidParamException when $classpath is empty
+	 */
+	private function loadPubsubClass($class,$path){
+		$classpath = $this->getPubsubClass($path, $class);
+		
+		if(!$classpath){
+			throw new InvalidParamException('No path provided');
+		}
+		
+		$classFile = Yii::getAlias(str_replace('@','',str_replace('/','\\' , $classpath)));
+		$this->stdout("Class File:$classFile\n", Console::FG_GREEN);
+		
+		return Yii::createObject($classFile);
 	}
 	
 	/**
@@ -155,7 +208,7 @@ abstract class BaseQueueController extends Controller
 		$this->stdout("With Namespace:$namespace\n", Console::FG_GREEN);
 		
 		if (!preg_match('/^\w+$/', $name)) {
-			throw new Exception('The '.$type.' name should contain letters, digits and/or underscore characters only.');
+			throw new InvalidParamException('The '.$type.' name should contain letters, digits and/or underscore characters only.');
 		}
 		
 		$className = 'm' . gmdate('ymd_His') . '_' . $name;
@@ -192,28 +245,19 @@ abstract class BaseQueueController extends Controller
 		return $pubsub;
 	}
 	
-	/**
-	 * get all worker class name
-	 */
-	protected function getWorkers(){
-		$worker = [];
-		foreach($this->workerPath as $path_alias){
-			$worker = array_merge($worker,$this->readPubSub($path_alias));
-		}
-		sort($worker);
-		return $this->checkPubsub($worker, 'No worker found');
-	}
 	
 	/**
-	 * Get all producer class name
+	 * Get all producer/worker class name
+	 * @param array $path path alias array for  finding pubsub
+	 * @param string $errormessage error message for not finding one
 	 */
-	protected function getProducer(){
-		$producer = [];
-		foreach($this->producerPath as $path_alias){
-			$producer = array_merge($producer,$this->readPubSub($path_alias));
+	protected function getPubsub($path,$errormessage){
+		$classes = [];
+		foreach($path as $path_alias){
+			$classes = array_merge($classes,$this->readPubSub($path_alias));
 		}
-		sort($producer);
-		return $this->checkPubsub($producer, 'No producer found');
+		sort($classes);
+		return $this->checkPubsub($classes, $errormessage);
 	}
 	
 	/**

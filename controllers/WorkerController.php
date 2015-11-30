@@ -45,7 +45,7 @@ class WorkerController extends BaseQueueController
 		if($worker){
 			return $this->runWorker($worker);
 		}else {
-			return $this->getWorkers();
+			return $this->getPubsub($this->workerPath,'No worker found');
 		}
 	}
 	

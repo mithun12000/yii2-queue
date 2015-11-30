@@ -42,7 +42,7 @@ class ProducerController extends BaseQueueController
 		if($producer){
 			return $this->runProducer($producer);
 		}else {
-			return $this->getProducer();	
+			return $this->getPubsub($this->producerPath,'No producer found');	
 		}
 	}
 	
