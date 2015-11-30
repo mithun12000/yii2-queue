@@ -111,7 +111,12 @@ abstract class BaseQueueController extends Controller
 	 * @return integer whether the migration is successful
 	 */
 	protected function runWorker($class)
-	{
+	{	
+		$found = false;
+		$workers = [];
+		foreach($this->workerPath as $path_alias){
+			$workers = $this->readPubSub($path_alias);
+		}
 		return self::EXIT_CODE_NORMAL;
 	}
 	
@@ -172,16 +177,18 @@ abstract class BaseQueueController extends Controller
 	protected function readPubSub($path){
 		$pubsub = [];
 		$path = Yii::getAlias($path);
-		$handle = opendir($path);
-		while (($file = readdir($handle)) !== false) {
-			if ($file === '.' || $file === '..') {
-				continue;
+		if(is_dir($path)){
+			$handle = opendir($path);
+			while (($file = readdir($handle)) !== false) {
+				if ($file === '.' || $file === '..') {
+					continue;
+				}
+				if (preg_match('/^(m(\d{6}_\d{6})_.*?)\.php$/', $file, $matches) && is_file($path . DIRECTORY_SEPARATOR . $file)) {
+					$pubsub[] = $matches[1];
+				}
 			}
-			if (preg_match('/^(m(\d{6}_\d{6})_.*?)\.php$/', $file, $matches) && is_file($path . DIRECTORY_SEPARATOR . $file)) {
-				$pubsub[] = $matches[1];
-			}
+			closedir($handle);
 		}
-		closedir($handle);
 		return $pubsub;
 	}
 	
