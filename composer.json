@@ -18,15 +18,15 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
+        "ext-pcntl": "*",
         "predis/predis": "1.0.1",
-        "mithun12000/yii2-process":"dev",
+        "mithun12000/yii2-process":"*",
         "pda/pheanstalk":"*",
         "videlalvaro/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
         "erik-dubbelboer/php-redis-admin":"*"
     },
     "suggest": {
-        "ext-pcntl": "*",
         "ext-amqp": "*",
         "aws/aws-sdk-php": "~3.0",
         "microsoft/windowsazure":"*"
