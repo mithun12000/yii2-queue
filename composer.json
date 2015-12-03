@@ -19,7 +19,7 @@
     "require": {
         "php": ">=5.4.0",
         "predis/predis": "1.0.1",
-        "mithun12000/yii2-process":"*",
+        "mithun12000/yii2-process":"dev",
         "pda/pheanstalk":"*",
         "videlalvaro/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
