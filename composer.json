@@ -15,6 +15,7 @@
         "issues": "https://github.com/mithun12000/yii2-queue/issues",
         "source": "https://github.com/mithun12000/yii2-queue"
     },
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "predis/predis": "1.0.1",
