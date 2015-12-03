@@ -115,6 +115,7 @@ abstract class BaseQueueController extends Controller
 	{
 		try{
 			$obj = $this->loadPubsubClass($class, $this->workerPath);
+			$obj->execute();
 		}catch (InvalidParamException $e){
 			$this->stdout("Worker name $class Not found\n", Console::FG_RED);
 		}

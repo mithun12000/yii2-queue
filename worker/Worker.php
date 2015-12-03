@@ -5,30 +5,15 @@
 namespace mithun\queue\worker;
 
 use Yii;
-use yii\base\Object;
+use mithun\queue\pubsub\BasePubsub;
+use mithun\queue\pubsub\pubsubGetActionTrait;
 
 /**
  * Worker Object
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-abstract class Worker extends Object
+abstract class Worker extends BasePubsub
 {	
-	/**
-	 * minimum process to run
-	 * @var integer
-	 */
-	public $min = 1;
-	
-	/**
-	 * maximum process to run
-	 * @var integer
-	 */
-	public $max = 1;
-	
-	/**
-	 * Runnable worker method
-	 * @param array $params
-	 */
-	abstract public function run($params);
+	use pubsubGetActionTrait;
 }

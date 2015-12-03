@@ -5,30 +5,24 @@
 namespace mithun\queue\producer;
 
 use Yii;
-use yii\base\Object;
+use mithun\queue\pubsub\BasePubsub;
+use mithun\queue\pubsub\pubsubGetActionTrait; 
 
 /**
  * Producer Object
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-abstract class Producer extends Object
-{	
-	/**
-	 * Min process to run
-	 * @var integer
-	 */
-	public $min = 1;
+abstract class Producer extends BasePubsub
+{
+	use pubsubGetActionTrait;
 	
 	/**
-	 * Max process to run
-	 * @var integer
+	 * @inheritdoc
 	 */
-	public $max = 1;
-	
-	/**
-	 * Runnable producer method
-	 * @param array $params
-	 */
-	abstract public function run($params);
+	public function init(){
+		parent::init();
+		$this->max = 1;
+		$this->min = 1;
+	}
 }

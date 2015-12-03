@@ -29,7 +29,7 @@ class <?= $className ?> extends Worker
 	/**
 	 * @inheritdoc
 	 */
-	public function run($params){
+	public function run(){
 		
 	}
 }

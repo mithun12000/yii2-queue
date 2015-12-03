@@ -10,22 +10,12 @@ use Yii;
 use mithun\queue\producer\Producer;
 
 /**
- * Worker Object
+ * Producer Object
  *
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
-class <?= $className ?> extends Worker
-{
-    /**
-	 * @inheritdoc
-	 */
-	public $min = 1;
-	
-	/**
-	 * @inheritdoc
-	 */
-	public $max = 1;
-	
+class <?= $className ?> extends Producer
+{	
 	/**
 	 * @inheritdoc
 	 */
