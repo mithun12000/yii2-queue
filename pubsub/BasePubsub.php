@@ -6,9 +6,10 @@ namespace mithun\queue\pubsub;
 
 use Yii;
 use yii\base\Object;
+use yii\helpers\FileHelper;
 use Arara\Process\Action\Action;
 use Arara\Process\Process;
-use mithun\process\components\Process;
+use mithun\process\components\Process as Cprocess;
 use mithun\process\components\ProcessPool;
 
 /**
@@ -69,15 +70,8 @@ abstract class BasePubsub extends Object
 		$this->processPool->start();
 		
 		while(true){
-			if (! $this->processPool->isRunning()) {
-				continue;
-			}
-			
-			if($this->processPool->count() < $this->max){
-				$this->attachClild();
-			}else{
-				sleep(2);
-			}
+			$this->attachClild();
+			sleep(2);
 		}
 	}
 	
@@ -108,14 +102,20 @@ abstract class BasePubsub extends Object
 			FileHelper::createDirectory($path);
 		}
 		
-		$appName = (new ReflectionClass($this))->getShortName();
+		$appName = (new \ReflectionClass($this))->getShortName();
 		
-		if($this->processPool instanceof Process){
+		$appName = substr(str_replace('_', '', $appName), 0, 16); 
+		
+		if($this->processPool instanceof ProcessPool){
 			$this->pidfile = $this->processPool->createPidfile($appName, $path);
 		}elseif ($this->process instanceof Process){
 			$this->pidfile = $this->process->createPidfile($appName, $path);
 		}
 		
-		register_shutdown_function([$this->pidfile, 'finalize']);
+		register_shutdown_function(array($this,'shutdownFn'));
+	}
+	
+	public function shutdownFn(){
+		$this->pidfile->finalize();
 	}
 }

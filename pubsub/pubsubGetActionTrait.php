@@ -41,5 +41,7 @@ trait pubsubGetActionTrait{
 		$action->bind(Action::EVENT_FINISH, function (Context $context) {
 			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_GREEN);
 		});
+		
+		return $action;
 	}
 }
