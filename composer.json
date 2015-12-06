@@ -15,8 +15,10 @@
         "issues": "https://github.com/mithun12000/yii2-queue/issues",
         "source": "https://github.com/mithun12000/yii2-queue"
     },
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
+        "ext-pcntl": "*",
         "predis/predis": "1.0.1",
         "mithun12000/yii2-process":"*",
         "pda/pheanstalk":"*",
@@ -25,7 +27,6 @@
         "erik-dubbelboer/php-redis-admin":"*"
     },
     "suggest": {
-        "ext-pcntl": "*",
         "ext-amqp": "*",
         "aws/aws-sdk-php": "~3.0",
         "microsoft/windowsazure":"*"
