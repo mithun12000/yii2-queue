@@ -7,7 +7,8 @@ namespace mithun\queue\pubsub;
 use Yii;
 use Arara\Process\Action\Callback;
 use Arara\Process\Action\Action;
-
+use Arara\Process\Context;
+use yii\helpers\Console;
 
 /**
  * pubsubGetActionTrait
@@ -23,23 +24,28 @@ trait pubsubGetActionTrait{
 		$action = new Callback([$this, 'run']);
 	
 		$action->bind(Action::EVENT_START, function (Context $context) {
-			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_YELLOW);
+			echo "Started ".json_encode($context->toArray());
+			$this->stdout(json_encode($context->toArray())."\n", Console::FG_YELLOW);
 		});
 	
 		$action->bind(Action::EVENT_ERROR, function (Context $context) {
-			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_RED);
+			echo "error ".json_encode($context->toArray());
+			$this->stdout(json_encode($context->toArray())."\n", Console::FG_RED);
 		});
 	
 		$action->bind(Action::EVENT_SUCCESS, function (Context $context) {
-			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_BLUE);
+			echo "Success ".json_encode($context->toArray());
+			$this->stdout(json_encode($context->toArray())."\n", Console::FG_BLUE);
 		});
 	
 		$action->bind(Action::EVENT_FAILURE, function (Context $context) {
-			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_RED);
+			echo "Failed ".json_encode($context->toArray());
+			$this->stdout(json_encode($context->toArray())."\n", Console::FG_RED);
 		});
 	
 		$action->bind(Action::EVENT_FINISH, function (Context $context) {
-			$this->stdout(json_encode($context->toArray(), (JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))."\n", Console::FG_GREEN);
+			echo "finish ".json_encode($context->toArray());
+			$this->stdout(json_encode($context->toArray())."\n", Console::FG_GREEN);
 		});
 		
 		return $action;
