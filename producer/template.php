@@ -19,7 +19,7 @@ class <?= $className ?> extends Producer
 	/**
 	 * @inheritdoc
 	 */
-	public function run($params){
+	public function run(){
 		
 	}
 }

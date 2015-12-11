@@ -182,7 +182,7 @@ abstract class BaseQueueController extends Controller
 		$classFile = Yii::getAlias(str_replace('@','',str_replace('/','\\' , $classpath)));
 		$this->stdout("Class File:$classFile\n", Console::FG_GREEN);
 		
-		return Yii::createObject($classFile);
+		return Yii::createObject(['class' => $classFile, 'controller' => $this]);
 	}
 	
 	/**
@@ -238,7 +238,7 @@ abstract class BaseQueueController extends Controller
 				if ($file === '.' || $file === '..') {
 					continue;
 				}
-				if (is_file($path . DIRECTORY_SEPARATOR . $file)) {
+				if (preg_match('/^(.*?)\.php$/', $file, $matches) && is_file($path . DIRECTORY_SEPARATOR . $file)) {
 					$pubsub[] = $matches[1];
 				}
 			}

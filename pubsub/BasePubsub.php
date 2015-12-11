@@ -6,6 +6,7 @@ namespace mithun\queue\pubsub;
 
 use Yii;
 use yii\base\Object;
+use yii\console\Controller;
 use yii\helpers\FileHelper;
 use Arara\Process\Action\Action;
 use Arara\Process\Process;
@@ -30,6 +31,12 @@ abstract class BasePubsub extends Object
 	 * @var integer
 	 */
 	public $max = 1;
+	
+	/**
+	 * current controller
+	 * @var Controller
+	 */
+	public $controller;
 	
 	public $pidfilePath = '@app/runtime/process';
 	
