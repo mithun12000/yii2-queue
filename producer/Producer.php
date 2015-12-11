@@ -14,9 +14,7 @@ use mithun\queue\pubsub\pubsubGetActionTrait;
  * @author Mithun Mandal <mithun12000@gmail.com>
  */
 abstract class Producer extends BasePubsub
-{
-	use pubsubGetActionTrait;
-	
+{	
 	/**
 	 * @inheritdoc
 	 */

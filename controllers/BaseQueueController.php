@@ -131,6 +131,7 @@ abstract class BaseQueueController extends Controller
 	{
 		try{
 			$obj = $this->loadPubsubClass($class,$this->producerPath);
+			$obj->run();
 		}catch (InvalidParamException $e){
 			$this->stdout("Producer name $class Not found\n", Console::FG_RED);
 		}
@@ -212,7 +213,7 @@ abstract class BaseQueueController extends Controller
 			throw new InvalidParamException('The '.$type.' name should contain letters, digits and/or underscore characters only.');
 		}
 		
-		$className = 'm' . gmdate('ymd_His') . '_' . $name;
+		$className = $name;
 		$file = $path . DIRECTORY_SEPARATOR . $className . '.php';
 		
 		if ($this->confirm("Create new $type '$file'?")) {
@@ -237,7 +238,7 @@ abstract class BaseQueueController extends Controller
 				if ($file === '.' || $file === '..') {
 					continue;
 				}
-				if (preg_match('/^(m(\d{6}_\d{6})_.*?)\.php$/', $file, $matches) && is_file($path . DIRECTORY_SEPARATOR . $file)) {
+				if (is_file($path . DIRECTORY_SEPARATOR . $file)) {
 					$pubsub[] = $matches[1];
 				}
 			}
