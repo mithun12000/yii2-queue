@@ -22,31 +22,27 @@ trait pubsubGetActionTrait{
 	 */
 	protected function getAction(){
 		$action = new Callback([$this, 'run']);
-	
+		
 		$action->bind(Action::EVENT_START, function (Context $context) {
-			echo "Started ".json_encode($context->toArray());
-			$this->stdout(json_encode($context->toArray())."\n", Console::FG_YELLOW);
+			Yii::$app->controller->stdout("Started ".json_encode($context->toArray())."\n", Console::FG_YELLOW);
 		});
-	
+		
 		$action->bind(Action::EVENT_ERROR, function (Context $context) {
-			echo "error ".json_encode($context->toArray());
-			$this->stdout(json_encode($context->toArray())."\n", Console::FG_RED);
+			Yii::$app->controller->stdout("Error ".json_encode($context->toArray())."\n", Console::FG_RED);
 		});
 	
 		$action->bind(Action::EVENT_SUCCESS, function (Context $context) {
-			echo "Success ".json_encode($context->toArray());
-			$this->stdout(json_encode($context->toArray())."\n", Console::FG_BLUE);
+			Yii::$app->controller->stdout("Success ".json_encode($context->toArray())."\n", Console::FG_BLUE);
 		});
 	
 		$action->bind(Action::EVENT_FAILURE, function (Context $context) {
-			echo "Failed ".json_encode($context->toArray());
-			$this->stdout(json_encode($context->toArray())."\n", Console::FG_RED);
+			Yii::$app->controller->stdout("Failed ".json_encode($context->toArray())."\n", Console::FG_RED);
 		});
 	
 		$action->bind(Action::EVENT_FINISH, function (Context $context) {
-			echo "finish ".json_encode($context->toArray());
-			$this->stdout(json_encode($context->toArray())."\n", Console::FG_GREEN);
+			Yii::$app->controller->stdout("finish ".json_encode($context->toArray())."\n\n\n", Console::FG_GREEN);
 		});
+		
 		
 		return $action;
 	}

@@ -64,8 +64,9 @@ class Queue extends Component implements QueueInterface
 	 */
 	public function push($payload, $queue, $delay = 0){
 		if($this->trigger_event(self::BEFORE_PUSH)){
-			$this->driver->push($payload, $queue,$delay);
+			$returnId = $this->driver->push($payload, $queue,$delay);
 			$this->trigger_event(self::AFTER_PUSH);
+			return $returnId;
 		}
 	}
 	
@@ -75,8 +76,9 @@ class Queue extends Component implements QueueInterface
 	 */
 	public function pop($queue){
 		if($this->trigger_event(self::BEFORE_POP)){
-			$this->driver->pop($queue);
+			$job = $this->driver->pop($queue);
 			$this->trigger_event(self::AFTER_POP);
+			return $job;
 		}
 	}
 	
