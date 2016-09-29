@@ -94,4 +94,26 @@ class SqsQueue extends Component implements QueueInterface
             'ReceiptHandle' => $message['receipt-handle'],
         ]);
     }
+    
+    /**
+     *
+     * @return number
+     */
+    public function is_message($queue = ''){
+    	$result = $this->sqs->getQueueAttributes([
+    			'QueueUrl' => $queue,
+    			'AttributeNames' => [
+    				'ApproximateNumberOfMessages',
+    				'ApproximateNumberOfMessagesNotVisible',
+    				'ApproximateNumberOfMessagesDelayed'
+    			]
+    	]);
+    	
+    	$queuecount = 0;
+    	
+    	foreach ($result->get("Attributes") as $key => $val){
+    		$queuecount += $val; 
+    	}
+    	return $queuecount;
+    }
 }

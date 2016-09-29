@@ -25,4 +25,8 @@ abstract class Producer extends BasePubsub
 		$this->max = 1;
 		$this->min = 1;
 	}
+	
+	protected function checkDone(){
+		
+	}
 }

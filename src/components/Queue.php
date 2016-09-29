@@ -112,4 +112,12 @@ class Queue extends Component implements QueueInterface
 			$this->trigger_event(self::AFTER_DELETE);
 		}
 	}
+	
+	/**
+	 *
+	 * @return number
+	 */
+	public function is_message($queue = ''){ 
+		return $this->driver->is_message($queue);
+	}
 }

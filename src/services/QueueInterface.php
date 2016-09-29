@@ -45,4 +45,12 @@ interface QueueInterface
      * @param array $message
      */
     public function delete(array $message);
+    
+    /**
+     * Check if message is there
+     * 
+     * @param string $queue
+     * @return number
+     */
+    public function is_message($queue = '');
 }

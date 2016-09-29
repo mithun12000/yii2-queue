@@ -113,4 +113,12 @@ class RedisQueue extends Component implements QueueInterface
     {
         $this->redis->zrem($message['queue'] . ':reserved', $message['body']);
     }
+    
+    /**
+     *
+     * @return number
+     */
+    public function is_message($queue = ''){
+    	return true;
+    }
 }

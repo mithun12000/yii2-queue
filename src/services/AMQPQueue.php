@@ -167,4 +167,12 @@ class AMQPQueue extends Component implements QueueInterface
          	$this->channel->basic_cancel($msg->delivery_info['consumer_tag']);
     	}
     }
+    
+    /**
+     * 
+     * @return number
+     */
+    public function is_message($queue = ''){
+    	return count($this->channel->callbacks);
+    }
 }

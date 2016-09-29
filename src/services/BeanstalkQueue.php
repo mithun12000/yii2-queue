@@ -149,4 +149,27 @@ class BeanstalkQueue extends Component implements QueueInterface
     {
         $this->beanstalk->delete($message['message']);
     }
+    
+    /**
+     *
+     * @return number
+     */
+    public function is_message($queue = ''){
+    	if($queue){
+    		$result = $this->beanstalk->statsTube($queue);
+    	}else{
+    		$result = $this->beanstalk->stats();
+    	}
+    	
+    	
+    	$messageCount = 0;
+    	
+    	foreach ($result as $key => $val){
+    		if(in_array($key, ['current-jobs-urgent', 'current-jobs-ready', 'current-jobs-reserved', 'current-jobs-delayed'])){
+    			$messageCount += $val;
+    		}
+    	}
+    	
+    	return $messageCount;
+    }
 }

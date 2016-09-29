@@ -32,4 +32,8 @@ class <?= $className ?> extends Worker
 	public function run(){
 		
 	}
+	
+	protected function checkDone(){
+	
+	}
 }

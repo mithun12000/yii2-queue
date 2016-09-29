@@ -67,6 +67,11 @@ abstract class BasePubsub extends Object
 	abstract protected function getAction();
 	
 	/**
+	 * Checker to shutdown process
+	 */
+	abstract protected function checkDone();
+	
+	/**
 	 * Running ProcessPool
 	 */
 	protected function runProcessPool(){
@@ -79,6 +84,7 @@ abstract class BasePubsub extends Object
 		while(true){
 			$this->attachClild();
 			sleep(2);
+			$this->checkDone();
 		}
 	}
 	
