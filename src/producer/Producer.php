@@ -29,4 +29,8 @@ abstract class Producer extends BasePubsub
 	protected function checkDone(){
 		
 	}
+	
+	protected function checkBefore(){
+	
+	}
 }

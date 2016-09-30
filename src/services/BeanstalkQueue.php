@@ -7,6 +7,7 @@
 namespace mithun\queue\services;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
+use Pheanstalk\Exception\ServerException;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -155,6 +156,7 @@ class BeanstalkQueue extends Component implements QueueInterface
      * @return number
      */
     public function is_message($queue = ''){
+    	try{
     	if($queue){
     		$result = $this->beanstalk->statsTube($queue);
     	}else{
@@ -171,5 +173,8 @@ class BeanstalkQueue extends Component implements QueueInterface
     	}
     	
     	return $messageCount;
+    	}catch (ServerException $e){
+    		return 1;
+    	}
     }
 }

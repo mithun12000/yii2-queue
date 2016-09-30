@@ -72,6 +72,11 @@ abstract class BasePubsub extends Object
 	abstract protected function checkDone();
 	
 	/**
+	 * Checker to before shutdown process
+	 */
+	abstract protected function checkBefore();
+	
+	/**
 	 * Running ProcessPool
 	 */
 	protected function runProcessPool(){
@@ -82,6 +87,7 @@ abstract class BasePubsub extends Object
 		$this->processPool->start();
 		
 		while(true){
+			$this->checkBefore();
 			$this->attachClild();
 			sleep(2);
 			$this->checkDone();
