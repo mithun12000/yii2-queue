@@ -36,4 +36,7 @@ class <?= $className ?> extends Worker
 	protected function checkDone(){
 	
 	}
+	
+	protected function checkBefore(){
+	}
 }
