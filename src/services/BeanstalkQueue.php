@@ -8,6 +8,7 @@ namespace mithun\queue\services;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 use Pheanstalk\Exception\ServerException;
+use Pheanstalk\Job;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -92,15 +93,18 @@ class BeanstalkQueue extends Component implements QueueInterface
     	$job = $this->beanstalk->watch($queue)
     					->ignore('default')
     					->reserve();
-    	
-    	$data = $job->getData();
-        $data = Json::decode($data);
-        return [
-            'id' => $data['id'],
-            'body' => $data['body'],
-            'queue' => $queue,
-        	'message' => $job,
-        ];
+    	if($job instanceof Job){
+	    	$data = $job->getData();
+	        $data = Json::decode($data);
+	        return [
+	            'id' => $data['id'],
+	            'body' => $data['body'],
+	            'queue' => $queue,
+	        	'message' => $job,
+	        ];
+    	}else{
+    		return false;
+    	}
     }
     /**
      * @inheritdoc
