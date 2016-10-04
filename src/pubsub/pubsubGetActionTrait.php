@@ -43,6 +43,10 @@ trait pubsubGetActionTrait{
 			Yii::$app->controller->stdout("finish ".json_encode($context->toArray())."\n\n\n", Console::FG_GREEN);
 		});
 		
+		$action->bind(Action::EVENT_TIMEOUT, function (Context $context) {
+			Yii::$app->controller->stdout("timeout ".json_encode($context->toArray())."\n\n\n", Console::FG_GREEN);
+		});
+		
 		
 		return $action;
 	}
