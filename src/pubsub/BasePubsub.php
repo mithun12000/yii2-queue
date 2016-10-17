@@ -99,7 +99,7 @@ abstract class BasePubsub extends Object
 	 */
 	protected function attachClild(){
 		$process = Yii::createObject('mithun\process\components\Process');
-		$process->create($this->getAction(), 30, $this->processPool);
+		$process->create($this->getAction(), 5, $this->processPool);
 		$this->processPool->attach($process);
 	}
 	
