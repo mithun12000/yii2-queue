@@ -22,7 +22,7 @@
         "predis/predis": "1.0.1",
         "mithun12000/yii2-process":"*",
         "pda/pheanstalk":"*",
-        "videlalvaro/php-amqplib": "2.5.*",
+        "php-amqplib/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
         "erik-dubbelboer/php-redis-admin":"*"
     },
