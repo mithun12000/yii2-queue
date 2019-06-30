@@ -4,7 +4,7 @@
     "keywords": ["queue","producer","worker", "yii2"],
     "homepage": "https://github.com/mithun12000/yii2-queue",
     "type": "yii2-extension",
-    "license": "GNU",
+    "license": "MIT",
     "authors": [
         {
             "name": "Mithun Mandal",
@@ -21,8 +21,8 @@
         "ext-pcntl": "*",
         "predis/predis": "1.0.1",
         "mithun12000/yii2-process":"*",
-        "pda/pheanstalk":"*",
-        "php-amqplib/php-amqplib": "2.5.*",
+        "pda/pheanstalk":"3.*",
+        "videlalvaro/php-amqplib": "2.5.*",
         "ptrofimov/beanstalk_console":"*",
         "erik-dubbelboer/php-redis-admin":"*"
     },
