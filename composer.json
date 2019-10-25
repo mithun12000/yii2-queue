@@ -18,7 +18,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "ext-pcntl": "*",
         "predis/predis": "1.0.1",
         "mithun12000/yii2-process":"*",
         "pda/pheanstalk":"3.*",
